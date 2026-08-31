@@ -1,0 +1,8 @@
+{
+  "name": "Remix Remix Remix Remix Remix Solar CRM",
+  "description": "Mobile-friendly Solar CRM with Lead Management, Admin Dashboard, Supabase synchronization, and Excel Import/Export.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

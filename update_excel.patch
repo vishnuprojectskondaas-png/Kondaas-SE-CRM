@@ -1,0 +1,87 @@
+--- src/lib/excel.ts
++++ src/lib/excel.ts
+@@ -29,6 +29,8 @@
+     'Roof Type': 'Concrete Flat',
+     'Lead Status': 'Scheduled Site Survey',
+     'Next Follow Up (DD-MM-YYYY hh:mm:ss AM/PM)': '05-09-2026 02:30:00 PM',
++    'Site Survey Requested Date': '04-09-2026 10:00:00 AM',
++    'Site Survey Completed Date': '',
+     'Notes': 'Interested in 5kW On-Grid Rooftop solar under PM Surya Ghar scheme.',
+     'Special Instructions': 'Check 3-phase sanction load.',
+   },
+@@ -47,6 +49,8 @@
+     'Roof Type': 'Truss Roof',
+     'Lead Status': 'Open',
+     'Next Follow Up (DD-MM-YYYY hh:mm:ss AM/PM)': '06-09-2026 11:00:00 AM',
++    'Site Survey Requested Date': '',
++    'Site Survey Completed Date': '',
+     'Notes': 'Wants to reduce 3000 Rs bill. Exploring hybrid options.',
+     'Special Instructions': 'Call after 5 PM.',
+   }
+@@ -95,6 +99,8 @@
+     { wch: 16 }, // Roof Type
+     { wch: 22 }, // Lead Status
+     { wch: 38 }, // Next Follow Up
++    { wch: 38 }, // Site Survey Requested Date
++    { wch: 38 }, // Site Survey Completed Date
+     { wch: 35 }, // Notes
+     { wch: 35 }, // Special Instructions
+   ];
+@@ -293,29 +299,23 @@
+       leadStatus = 'Open';
+     }
+ 
+-    // Parse Follow Up Date
+-    let followUp = getVal(['Next Follow Up (DD-MM-YYYY hh:mm:ss AM/PM)', 'Next Follow Up (YYYY-MM-DD HH:MM)', 'Next Follow Up', 'next_follow_up', 'Follow Up', 'Followup Date']);
+-    if (followUp) {
+-      // Check for DD-MM-YYYY format e.g. 05-09-2026 02:30:00 PM or 05-09-2026 14:30
+-      const ddmmRegex = /^(\d{1,2})[-/](\d{1,2})[-/](\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)?)?$/i;
+-      const match = followUp.trim().match(ddmmRegex);
++    const parseDateStr = (dateStr: string): string | null => {
++      if (!dateStr) return null;
++      const match = dateStr.trim().match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)?)?$/i);
+       if (match) {
+         const day = parseInt(match[1], 10);
+         const month = parseInt(match[2], 10) - 1;
+         const year = parseInt(match[3], 10);
+         let hour = match[4] ? parseInt(match[4], 10) : 0;
+         const minute = match[5] ? parseInt(match[5], 10) : 0;
+-        const second = match[6] ? parseInt(match[6], 10) : 0;
+         const ampm = match[7] ? match[7].toUpperCase() : null;
+         if (ampm === 'PM' && hour < 12) hour += 12;
+         if (ampm === 'AM' && hour === 12) hour = 0;
+-        const parsedDate = new Date(year, month, day, hour, minute, second);
++        const parsedDate = new Date(year, month, day, hour, minute);
+         if (!isNaN(parsedDate.getTime())) {
+           const pad = (n: number) => (n < 10 ? '0' + n : n);
+-          followUp = `${parsedDate.getFullYear()}-${pad(parsedDate.getMonth() + 1)}-${pad(parsedDate.getDate())}T${pad(parsedDate.getHours())}:${pad(parsedDate.getMinutes())}`;
++          return `${parsedDate.getFullYear()}-${pad(parsedDate.getMonth() + 1)}-${pad(parsedDate.getDate())}T${pad(parsedDate.getHours())}:${pad(parsedDate.getMinutes())}`;
+         }
+       } else {
+-        const parsedDate = new Date(followUp.includes('T') ? followUp : followUp.replace(' ', 'T'));
++        const parsedDate = new Date(dateStr.includes('T') ? dateStr : dateStr.replace(' ', 'T'));
+         if (!isNaN(parsedDate.getTime())) {
+           const pad = (n: number) => (n < 10 ? '0' + n : n);
+-          followUp = `${parsedDate.getFullYear()}-${pad(parsedDate.getMonth() + 1)}-${pad(parsedDate.getDate())}T${pad(parsedDate.getHours())}:${pad(parsedDate.getMinutes())}`;
++          return `${parsedDate.getFullYear()}-${pad(parsedDate.getMonth() + 1)}-${pad(parsedDate.getDate())}T${pad(parsedDate.getHours())}:${pad(parsedDate.getMinutes())}`;
+         }
+       }
++      return null;
++    };
++
++    // Parse Dates
++    let followUp = parseDateStr(getVal(['Next Follow Up (DD-MM-YYYY hh:mm:ss AM/PM)', 'Next Follow Up (YYYY-MM-DD HH:MM)', 'Next Follow Up', 'next_follow_up', 'Follow Up', 'Followup Date'])) || '';
++    const surveyReqDate = parseDateStr(getVal(['Site Survey Requested Date', 'site_survey_requested_date', 'Survey Requested'])) || null;
++    const surveyCompDate = parseDateStr(getVal(['Site Survey Completed Date', 'site_survey_completed_date', 'Survey Completed'])) || null;
+     }
+ 
+     // Validations
+@@ -367,6 +367,8 @@
+         roof_type: roofType,
+         lead_status: leadStatus,
+         next_follow_up: followUp || null,
++        site_survey_requested_date: surveyReqDate,
++        site_survey_completed_date: surveyCompDate,
+         notes: notes,
+         special_instructions: specialInstructions,
+       });

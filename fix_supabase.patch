@@ -1,0 +1,20 @@
+--- src/lib/supabase.ts
++++ src/lib/supabase.ts
+@@ -604,7 +604,7 @@
+         .select('*')
+         .order('name', { ascending: true });
+ 
+-      if (!error && Array.isArray(data) && data.length > 0) {
++      if (!error && Array.isArray(data)) {
+         const mappedUsers = (data as AppUser[]).map((u) => ({
+           ...u,
+           permissions: u.permissions || getDefaultPermissions(u.role),
+@@ -771,7 +771,7 @@
+         .select('*')
+         .order('planned_date_time', { ascending: false });
+ 
+-      if (!error && data && data.length > 0) {
++      if (!error && Array.isArray(data)) {
+         saveLocalDailyReports(data as DailyActivityReport[]);
+         return { reports: data as DailyActivityReport[], source: 'supabase' };
+       }

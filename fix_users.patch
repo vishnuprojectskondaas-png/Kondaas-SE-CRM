@@ -1,0 +1,19 @@
+--- src/lib/supabase.ts
++++ src/lib/supabase.ts
+@@ -607,6 +607,7 @@
+       if (!error && Array.isArray(data)) {
+         const mappedUsers = (data as AppUser[]).map((u) => ({
+           ...u,
++          avatar_color: u.avatar_color || (u as any).avatar_url || 'bg-slate-600',
+           permissions: u.permissions || getDefaultPermissions(u.role),
+         }));
+         return { users: mappedUsers, source: 'supabase' };
+@@ -636,7 +637,8 @@
+   const newUser: AppUser = {
+     ...userData,
+     id: 'usr-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4),
+     avatar_color: userData.avatar_color || randomColor,
++    avatar_url: userData.avatar_color || randomColor,
+     created_at: new Date().toISOString(),
+     permissions: userData.permissions || getDefaultPermissions(userData.role),
+   };
