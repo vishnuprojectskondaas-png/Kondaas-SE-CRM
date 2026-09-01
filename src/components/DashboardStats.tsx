@@ -819,6 +819,7 @@ export const DashboardStats: React.FC<DashboardStatsProps> = ({
             
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs text-slate-500 font-medium">{monthlyBreakdownList.length} Period Months</span>
+              {currentUser?.permissions?.canAccessExcel && (
               <button
                 type="button"
                 data-export-ignore="false"
@@ -848,6 +849,7 @@ export const DashboardStats: React.FC<DashboardStatsProps> = ({
                   </>
                 )}
               </button>
+              )}
             </div>
           </div>
 
@@ -986,6 +988,7 @@ export const DashboardStats: React.FC<DashboardStatsProps> = ({
               <span className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-semibold border border-slate-200">
                 {representativeOptions.length} Representatives
               </span>
+              {currentUser?.permissions?.canAccessExcel && (
 
               <button
                 type="button"
@@ -1016,6 +1019,7 @@ export const DashboardStats: React.FC<DashboardStatsProps> = ({
                 )}
               </button>
 
+              )}
               {(activeModifiedExactDate || (activeModifiedMonth && activeModifiedMonth !== 'ALL') || activeCreatedExactDate || (activeCreatedMonth && activeCreatedMonth !== 'ALL')) && (
                 <button
                   type="button"
@@ -1400,6 +1404,7 @@ export const DashboardStats: React.FC<DashboardStatsProps> = ({
             </span>
 
             {/* Download PNG Button */}
+            {currentUser?.permissions?.canAccessExcel && (
             <button
               type="button"
               data-export-ignore="false"
@@ -1429,6 +1434,7 @@ export const DashboardStats: React.FC<DashboardStatsProps> = ({
                 </>
               )}
             </button>
+            )}
           </div>
         </div>
 

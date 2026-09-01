@@ -431,6 +431,7 @@ export const DailyActivityReportModule: React.FC<DailyActivityReportModuleProps>
             <RefreshCw className="w-4 h-4" />
           </button>
 
+          {currentUser?.permissions?.canAccessExcel && ( <>
           {/* Download Excel Button */}
           <button
             type="button"
@@ -472,6 +473,7 @@ export const DailyActivityReportModule: React.FC<DailyActivityReportModuleProps>
               </>
             )}
           </button>
+          </>)}
 
           {/* Log New Activity Button */}
           <button
@@ -982,44 +984,47 @@ export const DailyActivityReportModule: React.FC<DailyActivityReportModuleProps>
 
             {/* Table Header Bar Right: Download Table PNG & Sort */}
             <div className="flex items-center flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={handleDownloadExcel}
-                className="px-3 py-1.5 rounded-lg text-xs font-bold border border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 hover:border-emerald-300 transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
-                title="Export this Daily Activity Records Table to Excel"
-              >
-                <FileSpreadsheet className="w-3.5 h-3.5" />
-                <span>Export to Excel</span>
-              </button>
-              <button
-                type="button"
-                data-export-ignore="true"
-                onClick={handleDownloadTablePng}
-                disabled={isExportingTablePng}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs ${
-                  tableExportSuccess
-                    ? 'bg-emerald-600 text-white border-emerald-700'
-                    : 'bg-white text-blue-900 border-blue-200 hover:bg-blue-50'
-                }`}
-                title="Download this Daily Activity Records Table as PNG"
-              >
-                {isExportingTablePng ? (
-                  <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" />
-                    <span>Saving Table PNG...</span>
-                  </>
-                ) : tableExportSuccess ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 text-white" />
-                    <span>Table PNG Saved!</span>
-                  </>
-                ) : (
-                  <>
-                    <Download className="w-3.5 h-3.5 text-blue-600" />
-                    <span>Download Table as PNG</span>
-                  </>
-                )}
-              </button>
+              {currentUser?.permissions?.canAccessExcel && ( <>
+                  <button
+                    type="button"
+                    onClick={handleDownloadExcel}
+                    className="px-3 py-1.5 rounded-lg text-xs font-bold border border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 hover:border-emerald-300 transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                    title="Export this Daily Activity Records Table to Excel"
+                  >
+                    <FileSpreadsheet className="w-3.5 h-3.5" />
+                    <span>Export to Excel</span>
+                  </button>
+                  <button
+                    type="button"
+                    data-export-ignore="true"
+                    onClick={handleDownloadTablePng}
+                    disabled={isExportingTablePng}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs ${
+                      tableExportSuccess
+                        ? 'bg-emerald-600 text-white border-emerald-700'
+                        : 'bg-white text-blue-900 border-blue-200 hover:bg-blue-50'
+                    }`}
+                    title="Download this Daily Activity Records Table as PNG"
+                  >
+                    {isExportingTablePng ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" />
+                        <span>Saving Table PNG...</span>
+                      </>
+                    ) : tableExportSuccess ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-white" />
+                        <span>Table PNG Saved!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Download className="w-3.5 h-3.5 text-blue-600" />
+                        <span>Download Table as PNG</span>
+                      </>
+                    )}
+                  </button>
+                </>
+              )}
 
               {/* Sort Controller */}
               <div className="flex items-center gap-1.5 text-xs text-slate-600" data-export-ignore="true">
