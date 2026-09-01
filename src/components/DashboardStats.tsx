@@ -130,6 +130,8 @@ export const DashboardStats: React.FC<DashboardStatsProps> = ({
 
   const [showTeamLeaderboard, setShowTeamLeaderboard] = useState<boolean>(false);
   const [showMonthlyBreakdown, setShowMonthlyBreakdown] = useState<boolean>(true);
+  const isUserLogin = Boolean(currentUser && currentUser.role !== 'Admin' && currentUser.role !== 'Branch Manager');
+  const showAnalyticsFilters = !isUserLogin;
 
   // PNG Export states
   const [isExportingMonthlyTable, setIsExportingMonthlyTable] = useState(false);
@@ -702,6 +704,7 @@ export const DashboardStats: React.FC<DashboardStatsProps> = ({
     <div className="space-y-6">
       
       {/* 1. ADMIN DASHBOARD ANALYTICS FILTERS (Responsible, Lead Created On, Lead Modified On) */}
+      {showAnalyticsFilters && (
       <DashboardFilters
         activeUserFilter={activeUserFilter}
         onUserChange={handleUserChange}
@@ -731,6 +734,7 @@ export const DashboardStats: React.FC<DashboardStatsProps> = ({
             : undefined
         }
       />
+      )}
 
       {/* 2. OVERALL MONTHLY-WISE PIPELINE METRIC (Total Leads, Site Survey Confirmed, Site Survey Completed, Order Confirmed, Modified Leads) */}
       <OverallMonthlyPipelineMetrics
