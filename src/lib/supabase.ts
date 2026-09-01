@@ -137,20 +137,29 @@ with check (true);
 
 
 export function getStoredSupabaseConfig(): SupabaseConfig {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEYS.SUPABASE_CONFIG);
-    if (saved) {
-      return JSON.parse(saved);
-    }
-  } catch (e) {
-    console.error('Failed to parse saved supabase config', e);
-  }
-  return {
+  let config: SupabaseConfig = {
     url: DEFAULT_SUPABASE_URL,
     anonKey: DEFAULT_SUPABASE_ANON_KEY,
     tableName: DEFAULT_TABLE_NAME,
     isConnected: false,
   };
+  try {
+    const saved = localStorage.getItem(STORAGE_KEYS.SUPABASE_CONFIG);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (DEFAULT_SUPABASE_URL && !DEFAULT_SUPABASE_URL.includes('your-project-id')) {
+        parsed.url = DEFAULT_SUPABASE_URL;
+        parsed.anonKey = DEFAULT_SUPABASE_ANON_KEY;
+        parsed.isConnected = true;
+      }
+      config = parsed;
+    } else if (DEFAULT_SUPABASE_URL && !DEFAULT_SUPABASE_URL.includes('your-project-id')) {
+      config.isConnected = true;
+    }
+  } catch (e) {
+    console.error('Failed to parse saved supabase config', e);
+  }
+  return config;
 }
 
 export function saveStoredSupabaseConfig(config: SupabaseConfig): void {
